@@ -48,12 +48,6 @@ export const config = getDefaultConfig({
   transports: {
     [mocaNetwork.id]: http(process.env.MOCA_RPC_URL || 'https://testnet-rpc.mocachain.org/'),
   },
-  connectors: [
-    airConnector({
-      partnerId: process.env.AIRKIT_PARTNER_ID || 'moca-proof-of-dev-2024',
-      chains: [mocaNetwork],
-    }),
-  ],
   ssr: false, // Disable SSR for wallet connection
 })
 

@@ -89,7 +89,8 @@ export async function POST(req: NextRequest) {
         })
       }
     } catch (profileError) {
-      console.log('Could not check existing profile, proceeding with mint attempt:', profileError.message)
+      const err = profileError as unknown as { message?: string }
+      console.log('Could not check existing profile, proceeding with mint attempt:', err?.message)
     }
 
     // Prepare profile data
@@ -133,15 +134,16 @@ export async function POST(req: NextRequest) {
     console.log('=== MINT SUCCESS ===', response)
     return NextResponse.json(response)
     
-  } catch (e: any) {
+  } catch (e) {
+    const err = e as unknown as { message?: string; stack?: string; constructor?: { name?: string } }
     console.error('=== MINT ERROR ===', e)
-    console.error('Error message:', e?.message)
-    console.error('Error stack:', e?.stack)
+    console.error('Error message:', err?.message)
+    console.error('Error stack:', err?.stack)
     
     return NextResponse.json({ 
-      error: e?.message || 'Mint failed',
-      details: e?.stack,
-      type: e?.constructor?.name || 'Unknown'
+      error: err?.message || 'Mint failed',
+      details: err?.stack,
+      type: err?.constructor?.name || 'Unknown'
     }, { status: 500 })
   }
 }

@@ -54,7 +54,8 @@ export async function GET(req: NextRequest) {
         // For now, we'll return the profile without wallet address
         walletAddress = 'Unknown' // We'll need to implement a reverse lookup
       } catch (githubError) {
-        console.log('GitHub search failed:', githubError.message)
+        const err = githubError as unknown as { message?: string }
+        console.log('GitHub search failed:', err?.message)
         return NextResponse.json({ error: 'Profile not found for this GitHub username' }, { status: 404 })
       }
     }
@@ -92,11 +93,12 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ 
       profile: serializedProfile
     })
-  } catch (e: any) {
+  } catch (e) {
+    const err = e as unknown as { message?: string; stack?: string }
     console.error('Profile read error:', e)
     return NextResponse.json({ 
-      error: e?.message || 'Failed',
-      details: e?.stack
+      error: err?.message || 'Failed',
+      details: err?.stack
     }, { status: 500 })
   }
 }

@@ -13,8 +13,25 @@ export interface DeveloperIdentity {
 
 export interface CredentialResult {
   success: boolean
-  credential?: any
+  credential?: Credential
   error?: string
+}
+
+export interface CredentialMetadata {
+  githubUsername: string
+  reputationScore: number
+  totalStars: number
+  totalRepos: number
+}
+
+export interface Credential {
+  id: string
+  type: string
+  recipient: string
+  metadata: CredentialMetadata
+  issuedAt: string
+  status: 'issued' | 'revoked' | 'pending'
+  partnerId: string
 }
 
 // AIR Kit configuration for Moca Network
@@ -65,8 +82,8 @@ export class AirKitService {
   async issueCredential(params: {
     recipient: string
     credentialType: string
-    metadata: any
-  }): Promise<any> {
+    metadata: CredentialMetadata
+  }): Promise<Credential> {
     try {
       // For development, return a mock credential
       // In production, this would call the AIR Kit API
@@ -118,7 +135,14 @@ export async function verifyDeveloperIdentity(address: string): Promise<Develope
   }
 }
 
-export async function mintDeveloperBadge(address: string, githubData: any): Promise<CredentialResult> {
+export interface GithubBadgeInput {
+  username: string
+  reputationScore: number
+  totalStars: number
+  totalRepositories: number
+}
+
+export async function mintDeveloperBadge(address: string, githubData: GithubBadgeInput): Promise<CredentialResult> {
   try {
     const airService = await initializeAirService()
     const result = await airService.issueCredential({
@@ -134,6 +158,7 @@ export async function mintDeveloperBadge(address: string, githubData: any): Prom
     return { success: true, credential: result }
   } catch (error) {
     console.error('AIR Kit credential issuance failed:', error)
-    return { success: false, error: error.message }
+    const message = error instanceof Error ? error.message : 'Unknown error'
+    return { success: false, error: message }
   }
 }
