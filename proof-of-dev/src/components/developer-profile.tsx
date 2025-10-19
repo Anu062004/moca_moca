@@ -5,6 +5,7 @@ import { useAccount } from 'wagmi'
 import { useSession, signIn, signOut } from 'next-auth/react'
 import { Github, Loader2, CheckCircle, AlertCircle, Star, GitBranch, Users, Calendar } from 'lucide-react'
 import { GitHubAnalyzer, DeveloperMetrics } from '@/lib/github-analyzer'
+import { mintDeveloperBadge } from '@/lib/airkit'
 
 export function DeveloperProfile() {
   const { address, isConnected } = useAccount()
@@ -42,14 +43,60 @@ export function DeveloperProfile() {
     
     setMinting(true)
     try {
-      // TODO: Implement smart contract interaction
-      console.log('Minting profile for:', address, metrics)
+      const topLanguages = Object.entries(metrics.languages)
+        .sort(([,a], [,b]) => b - a)
+        .slice(0, 5)
+        .map(([lang]) => lang)
+
+      const res = await fetch('/api/mint', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          developer: address,
+          githubUsername: (session?.githubLogin || session?.user?.name) as string,
+          metrics: {
+            reputationScore: metrics.reputationScore,
+            totalCommits: metrics.totalCommits,
+            totalRepositories: metrics.totalRepositories,
+            totalStars: metrics.totalStars,
+            followers: metrics.followers,
+            accountAge: metrics.accountAge,
+            topLanguages,
+          },
+        }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data?.error || 'Mint failed')
       
-      // Simulate minting process
-      await new Promise(resolve => setTimeout(resolve, 3000))
-      
-      // Show success message
-      alert('Profile minted successfully!')
+      // Handle different response types
+      if (data.message && data.message.includes('already has')) {
+        // Developer already has a profile
+        const existingMessage = `You already have a Proof of Dev token! 🎉
+
+Token ID: ${data.tokenId}
+GitHub Username: ${data.existingProfile?.githubUsername}
+Reputation Score: ${data.existingProfile?.reputationScore}
+Contract Address: ${data.contractAddress}
+Chain ID: ${data.mocaNetwork?.chainId || 222888}
+Explorer: ${data.mocaNetwork?.explorerUrl || 'https://testnet-explorer.mocachain.org/'}
+
+Your Proof of Dev token is already live on Moca Network!`
+        
+        alert(existingMessage)
+      } else {
+        // New profile minted
+        const successMessage = `Profile minted successfully on Moca Testnet! 🚀
+
+Transaction Hash: ${data.txHash}
+Contract Address: ${data.contractAddress}
+Chain ID: ${data.mocaNetwork?.chainId || 222888}
+Explorer: ${data.mocaNetwork?.explorerUrl || 'https://testnet-explorer.mocachain.org/'}
+AIR Kit Credential: ${data.airKitCredential?.id || 'N/A'}
+
+Your Proof of Dev token is now live on Moca Network!`
+        
+        alert(successMessage)
+      }
     } catch (err) {
       setError('Failed to mint profile')
     } finally {

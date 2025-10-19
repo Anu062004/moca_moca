@@ -30,25 +30,34 @@ export function VerificationInterface() {
     setProfile(null)
 
     try {
-      // TODO: Implement smart contract query
-      // For now, we'll simulate a search
-      await new Promise(resolve => setTimeout(resolve, 1500))
-
-      // Mock data for demonstration
-      const mockProfile: DeveloperProfile = {
-        walletAddress: searchInput,
-        githubUsername: 'developer123',
-        reputationScore: 850,
-        totalCommits: 1250,
-        totalRepositories: 45,
-        totalStars: 320,
-        followers: 89,
-        accountAge: 1095, // 3 years
-        topLanguages: ['TypeScript', 'JavaScript', 'Python', 'Solidity', 'Rust'],
-        mintedAt: Date.now() - 86400000 // 1 day ago
+      const isAddress = /^0x[a-fA-F0-9]{40}$/.test(searchInput)
+      const searchParam = isAddress ? 'address' : 'github'
+      const res = await fetch(`/api/profile?${searchParam}=${encodeURIComponent(searchInput)}`)
+      const data = await res.json()
+      if (!res.ok) throw new Error(data?.error || 'Not found')
+      const p = data.profile
+      const parsed: DeveloperProfile = {
+        walletAddress: p.walletAddress || searchInput,
+        githubUsername: p.githubUsername,
+        reputationScore: Number(p.reputationScore),
+        totalCommits: Number(p.totalCommits),
+        totalRepositories: Number(p.totalRepositories),
+        totalStars: Number(p.totalStars),
+        followers: Number(p.followers),
+        accountAge: Number(p.accountAge),
+        topLanguages: p.topLanguages as string[],
+        mintedAt: Number(p.mintedAt) * 1000,
       }
-
-      setProfile(mockProfile)
+      
+      console.log('Profile verification successful:', {
+        searchInput: searchInput,
+        searchType: isAddress ? 'wallet' : 'github',
+        contractAddress: data.profile.contractAddress,
+        airKitVerified: data.profile.airKitIdentity?.verified,
+        reputation: data.profile.airKitIdentity?.reputation,
+        badges: data.profile.airKitIdentity?.badges
+      })
+      setProfile(parsed)
     } catch (err) {
       setError('Failed to find developer profile')
     } finally {

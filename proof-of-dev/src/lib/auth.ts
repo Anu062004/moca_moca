@@ -1,6 +1,6 @@
 import NextAuth from "next-auth"
 import { NextAuthOptions } from "next-auth"
-import GitHubProvider from "next-auth/providers/github"
+import GitHubProvider, { type GithubProfile } from "next-auth/providers/github"
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -9,24 +9,28 @@ export const authOptions: NextAuthOptions = {
       clientSecret: process.env.GITHUB_CLIENT_SECRET!,
       authorization: {
         params: {
-          scope: "read:user user:email read:org"
+          scope: "read:user user:email read:org public_repo"
         }
       }
     })
   ],
   callbacks: {
     async jwt({ token, account, profile }) {
-      if (account && profile) {
+      if (account?.access_token) {
         token.accessToken = account.access_token
-        token.githubId = profile.id
-        token.githubLogin = profile.login
+      }
+
+      if (profile) {
+        const gh = profile as GithubProfile
+        token.githubId = (gh.id as unknown as string | number) ?? undefined
+        token.githubLogin = gh.login ?? undefined
       }
       return token
     },
     async session({ session, token }) {
-      session.accessToken = token.accessToken as string
-      session.githubId = token.githubId as string
-      session.githubLogin = token.githubLogin as string
+      session.accessToken = (token.accessToken as string | undefined) ?? undefined
+      session.githubId = (token.githubId as string | number | undefined) as string | undefined
+      session.githubLogin = (token.githubLogin as string | undefined) ?? undefined
       return session
     }
   },

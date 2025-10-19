@@ -40,8 +40,8 @@ export class GitHubAnalyzer {
       const { data: orgs } = await this.octokit.orgs.listForUser({ username })
 
       // Calculate metrics
-      const totalStars = repos.reduce((sum, repo) => sum + repo.stargazers_count, 0)
-      const totalForks = repos.reduce((sum, repo) => sum + repo.forks_count, 0)
+      const totalStars = repos.reduce((sum, repo) => sum + (repo.stargazers_count ?? 0), 0)
+      const totalForks = repos.reduce((sum, repo) => sum + (repo.forks_count ?? 0), 0)
       
       // Analyze languages
       const languages: Record<string, number> = {}

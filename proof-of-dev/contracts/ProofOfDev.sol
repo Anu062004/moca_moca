@@ -51,7 +51,7 @@ contract ProofOfDev is ERC721, Ownable {
         uint256 newReputationScore
     );
     
-    constructor() ERC721("Proof of Dev", "POD") Ownable(msg.sender) {}
+    constructor() ERC721("Proof of Dev", "POD") Ownable() {}
     
     /**
      * @dev Mint a new Proof of Dev SBT
