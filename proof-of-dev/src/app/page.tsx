@@ -4,9 +4,10 @@ import { useState, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
 import { useAccount } from 'wagmi'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Shield, Github, Wallet, CheckCircle, Star, Users, Calendar, Code, Zap, X } from 'lucide-react'
+import { Shield, Github, Wallet, CheckCircle, Star, Users, Calendar, Code, Zap, X, Award } from 'lucide-react'
 import { DeveloperProfile } from '@/components/developer-profile'
 import { VerificationInterface } from '@/components/verification-interface'
+import { CredentialDashboard } from '@/components/credential-dashboard'
 import { WalletConnect } from '@/components/wallet-connect'
 import { Planet3D } from '@/components/Planet3D'
 import { ActionButtons } from '@/components/ActionButtons'
@@ -15,7 +16,7 @@ import { Navbar } from '@/components/Navbar'
 export default function Home() {
   const { data: session, status } = useSession()
   const { address, isConnected } = useAccount()
-  const [activeTab, setActiveTab] = useState<'analyze' | 'verify'>('analyze')
+  const [activeTab, setActiveTab] = useState<'analyze' | 'verify' | 'credentials'>('analyze')
   const [showClassicUI, setShowClassicUI] = useState(false)
 
   const handleConnectWallet = () => {
@@ -30,6 +31,11 @@ export default function Home() {
 
   const handleViewProfile = () => {
     setActiveTab('analyze')
+    setShowClassicUI(true)
+  }
+
+  const handleViewCredentials = () => {
+    setActiveTab('credentials')
     setShowClassicUI(true)
   }
 
@@ -75,6 +81,7 @@ export default function Home() {
               onConnectWallet={handleConnectWallet}
               onVerifyProfile={handleVerifyProfile}
               onViewProfile={handleViewProfile}
+              onViewCredentials={handleViewCredentials}
               isConnected={isConnected}
               userAddress={address}
             />
@@ -87,6 +94,7 @@ export default function Home() {
               onConnectWallet={handleConnectWallet}
               onVerifyProfile={handleVerifyProfile}
               onViewProfile={handleViewProfile}
+              onViewCredentials={handleViewCredentials}
               onMintToken={handleMintToken}
               onExploreNetwork={handleExploreNetwork}
               onViewStats={handleViewStats}
@@ -235,13 +243,28 @@ export default function Home() {
                     <span>Verify Profile</span>
                   </div>
                 </button>
+                <button
+                  onClick={() => setActiveTab('credentials')}
+                  className={`flex-1 py-3 px-6 rounded-md font-medium transition-all duration-200 ${
+                    activeTab === 'credentials'
+                      ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg'
+                      : 'text-white/60 hover:text-white hover:bg-white/10'
+                  }`}
+                >
+                  <div className="flex items-center justify-center space-x-2">
+                    <Award className="w-5 h-5" />
+                    <span>Credentials</span>
+                  </div>
+                </button>
               </div>
 
               {/* Tab Content */}
               {activeTab === 'analyze' ? (
                 <DeveloperProfile />
-              ) : (
+              ) : activeTab === 'verify' ? (
                 <VerificationInterface />
+              ) : (
+                <CredentialDashboard />
               )}
             </main>
 

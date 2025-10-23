@@ -10,7 +10,8 @@ import {
   Globe, 
   Star,
   CheckCircle,
-  ExternalLink
+  ExternalLink,
+  Award
 } from 'lucide-react'
 
 interface ActionButtonProps {
@@ -121,6 +122,7 @@ interface ActionButtonsProps {
   onConnectWallet: () => void
   onVerifyProfile: () => void
   onViewProfile: () => void
+  onViewCredentials: () => void
   onMintToken: () => void
   onExploreNetwork: () => void
   onViewStats: () => void
@@ -130,6 +132,7 @@ export function ActionButtons({
   onConnectWallet,
   onVerifyProfile,
   onViewProfile,
+  onViewCredentials,
   onMintToken,
   onExploreNetwork,
   onViewStats
@@ -158,6 +161,14 @@ export function ActionButtons({
       position: { x: 15, y: 70 },
       delay: 0.6,
       variant: 'accent' as const
+    },
+    {
+      icon: <Award className="w-6 h-6" />,
+      label: 'View Credentials',
+      onClick: onViewCredentials,
+      position: { x: 50, y: 20 },
+      delay: 0.7,
+      variant: 'primary' as const
     },
     {
       icon: <Zap className="w-6 h-6" />,
@@ -222,4 +233,6 @@ export function ActionButtons({
     </div>
   )
 }
+
+
 

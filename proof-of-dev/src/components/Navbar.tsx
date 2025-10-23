@@ -10,13 +10,15 @@ import {
   Wallet, 
   User,
   Settings,
-  LogOut
+  LogOut,
+  Award
 } from 'lucide-react'
 
 interface NavbarProps {
   onConnectWallet: () => void
   onVerifyProfile: () => void
   onViewProfile: () => void
+  onViewCredentials: () => void
   isConnected?: boolean
   userAddress?: string
 }
@@ -25,6 +27,7 @@ export function Navbar({
   onConnectWallet, 
   onVerifyProfile, 
   onViewProfile,
+  onViewCredentials,
   isConnected = false,
   userAddress
 }: NavbarProps) {
@@ -34,6 +37,7 @@ export function Navbar({
     { label: 'Home', icon: <Home className="w-4 h-4" />, onClick: () => {} },
     { label: 'Verify', icon: <Shield className="w-4 h-4" />, onClick: onVerifyProfile },
     { label: 'Profile', icon: <User className="w-4 h-4" />, onClick: onViewProfile },
+    { label: 'Credentials', icon: <Award className="w-4 h-4" />, onClick: onViewCredentials },
   ]
   
   return (
@@ -188,4 +192,6 @@ export function Navbar({
     </motion.nav>
   )
 }
+
+
 

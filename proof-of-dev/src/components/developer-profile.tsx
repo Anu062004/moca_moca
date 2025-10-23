@@ -48,7 +48,7 @@ export function DeveloperProfile() {
         .slice(0, 5)
         .map(([lang]) => lang)
 
-      const res = await fetch('/api/mint', {
+      const res = await fetch('/api/mint-simple', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -68,35 +68,22 @@ export function DeveloperProfile() {
       const data = await res.json()
       if (!res.ok) throw new Error(data?.error || 'Mint failed')
       
-      // Handle different response types
-      if (data.message && data.message.includes('already has')) {
-        // Developer already has a profile
-        const existingMessage = `You already have a Proof of Dev token! 🎉
+      // Handle success response
+      const successMessage = `Credential minted successfully! 🚀
 
-Token ID: ${data.tokenId}
-GitHub Username: ${data.existingProfile?.githubUsername}
-Reputation Score: ${data.existingProfile?.reputationScore}
-Contract Address: ${data.contractAddress}
-Chain ID: ${data.mocaNetwork?.chainId || 222888}
-Explorer: ${data.mocaNetwork?.explorerUrl || 'https://testnet-explorer.mocachain.org/'}
+Developer: ${data.developer?.githubUsername || 'Unknown'}
+Address: ${data.developer?.address}
+Reputation Score: ${data.developer?.reputationScore}
+Total Stars: ${data.developer?.totalStars}
+Total Repositories: ${data.developer?.totalRepositories}
+Top Languages: ${data.developer?.topLanguages?.join(', ') || 'None'}
 
-Your Proof of Dev token is already live on Moca Network!`
-        
-        alert(existingMessage)
-      } else {
-        // New profile minted
-        const successMessage = `Profile minted successfully on Moca Testnet! 🚀
+Credential ID: ${data.credential?.id || 'N/A'}
+Issued At: ${new Date(data.timestamp).toLocaleString()}
 
-Transaction Hash: ${data.txHash}
-Contract Address: ${data.contractAddress}
-Chain ID: ${data.mocaNetwork?.chainId || 222888}
-Explorer: ${data.mocaNetwork?.explorerUrl || 'https://testnet-explorer.mocachain.org/'}
-AIR Kit Credential: ${data.airKitCredential?.id || 'N/A'}
-
-Your Proof of Dev token is now live on Moca Network!`
-        
-        alert(successMessage)
-      }
+Your developer credential is now ready! You can view it in the Credentials tab.`
+      
+      alert(successMessage)
     } catch (err) {
       setError('Failed to mint profile')
     } finally {
