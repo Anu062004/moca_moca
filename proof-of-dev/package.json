@@ -6,18 +6,22 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "dev:3000": "cross-env PORT=3000 next dev --turbopack",
+    "dev:ps": "powershell -ExecutionPolicy Bypass -File start-dev.ps1",
     "build": "next build --turbopack",
     "start": "next start",
     "lint": "eslint",
     "hh:compile": "hardhat compile --config hardhat.config.mjs",
     "hh:deploy:moca": "hardhat run --config hardhat.config.mjs --network moca scripts/deploy.mjs",
     "deploy": "bash scripts/deploy-and-update-env.sh",
+    "deploy:ps": "powershell -ExecutionPolicy Bypass -File scripts/deploy-and-update-env.ps1",
     "test:smoke": "node scripts/smoke-test.js",
     "test:github": "node scripts/github-test.js",
     "test:diagnostics": "curl http://localhost:3000/api/diagnostics",
     "demo": "bash demo.sh",
+    "demo:ps": "powershell -ExecutionPolicy Bypass -File demo.ps1",
     "demo:report": "bash demo.sh && cat /tmp/demo_report.md",
-    "setup": "cp env.example .env.local && echo 'Please update .env.local with your values'"
+    "setup": "cp env.example .env.local && echo 'Please update .env.local with your values'",
+    "setup:ps": "Copy-Item env.example .env.local; Write-Host 'Please update .env.local with your values'"
   },
   "dependencies": {
     "@mocanetwork/airkit": "^1.6.0",

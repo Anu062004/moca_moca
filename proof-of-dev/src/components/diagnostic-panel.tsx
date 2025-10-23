@@ -90,7 +90,7 @@ export function DiagnosticPanel() {
           <div>
             <h4 className="text-md font-medium text-white mb-2">Configuration</h4>
             <div className="space-y-2 text-sm">
-              {Object.entries(diagnostics.configuration).map(([key, value]) => (
+              {diagnostics.configuration && Object.entries(diagnostics.configuration).map(([key, value]) => (
                 <div key={key} className="flex justify-between">
                   <span className="text-gray-300">{key}</span>
                   <span className="text-white font-mono text-xs max-w-xs truncate">
@@ -98,11 +98,14 @@ export function DiagnosticPanel() {
                   </span>
                 </div>
               ))}
+              {!diagnostics.configuration && (
+                <div className="text-gray-400 text-sm">Configuration data not available</div>
+              )}
             </div>
           </div>
 
           {/* Recommendations */}
-          {diagnostics.recommendations.length > 0 && (
+          {diagnostics.recommendations && diagnostics.recommendations.length > 0 && (
             <div>
               <h4 className="text-md font-medium text-white mb-2">Recommendations</h4>
               <div className="space-y-2">
