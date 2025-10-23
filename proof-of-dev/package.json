@@ -15,6 +15,8 @@
     "test:smoke": "node scripts/smoke-test.js",
     "test:github": "node scripts/github-test.js",
     "test:diagnostics": "curl http://localhost:3000/api/diagnostics",
+    "demo": "bash demo.sh",
+    "demo:report": "bash demo.sh && cat /tmp/demo_report.md",
     "setup": "cp env.example .env.local && echo 'Please update .env.local with your values'"
   },
   "dependencies": {
