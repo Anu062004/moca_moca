@@ -25,13 +25,6 @@ export function DeveloperProfile() {
   const [isSearching, setIsSearching] = useState(false)
   const [searchError, setSearchError] = useState<string | null>(null)
 
-  // Auto-analyze current user's profile on session load
-  useEffect(() => {
-    if (session?.accessToken && session.githubLogin && !metrics) {
-      analyzeProfile(session.githubLogin)
-    }
-  }, [session, metrics])
-
   const analyzeProfile = async (username?: string) => {
     const targetUsername = username || session?.githubLogin || session?.user?.name
     

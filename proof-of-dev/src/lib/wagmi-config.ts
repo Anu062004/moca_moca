@@ -2,13 +2,24 @@ import { http } from 'wagmi'
 import { getDefaultConfig } from '@rainbow-me/rainbowkit'
 import { airConnector } from '@mocanetwork/airkit-connector'
 
-// Disable WalletConnect telemetry to reduce 403 errors
+// Disable WalletConnect telemetry and API calls to reduce 403 errors
 if (typeof window !== 'undefined') {
+  // Override fetch to handle WalletConnect API errors
   const originalFetch = global.fetch
   global.fetch = async (url, options) => {
-    if (typeof url === 'string' && url.includes('api.web3modal.org')) {
-      // Skip WalletConnect API calls that cause 403 errors
-      return new Response(JSON.stringify({}), { status: 200 })
+    if (typeof url === 'string' && (
+      url.includes('api.web3modal.org') ||
+      url.includes('api.reown.app') ||
+      url.includes('pulse.walletconnect.com')
+    )) {
+      // Return mock response for WalletConnect API calls
+      return new Response(JSON.stringify({
+        success: true,
+        data: {}
+      }), { 
+        status: 200,
+        headers: { 'Content-Type': 'application/json' }
+      })
     }
     return originalFetch(url, options)
   }
