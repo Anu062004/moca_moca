@@ -13,6 +13,7 @@
     "hh:deploy:moca": "hardhat run --config hardhat.config.mjs --network moca scripts/deploy.mjs",
     "deploy": "bash scripts/deploy-and-update-env.sh",
     "test:smoke": "node scripts/smoke-test.js",
+    "test:github": "node scripts/github-test.js",
     "test:diagnostics": "curl http://localhost:3000/api/diagnostics",
     "setup": "cp env.example .env.local && echo 'Please update .env.local with your values'"
   },
