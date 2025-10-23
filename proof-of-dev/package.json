@@ -10,7 +10,11 @@
     "start": "next start",
     "lint": "eslint",
     "hh:compile": "hardhat compile --config hardhat.config.mjs",
-    "hh:deploy:moca": "hardhat run --config hardhat.config.mjs --network moca scripts/deploy.mjs"
+    "hh:deploy:moca": "hardhat run --config hardhat.config.mjs --network moca scripts/deploy.mjs",
+    "deploy": "bash scripts/deploy-and-update-env.sh",
+    "test:smoke": "node scripts/smoke-test.js",
+    "test:diagnostics": "curl http://localhost:3000/api/diagnostics",
+    "setup": "cp env.example .env.local && echo 'Please update .env.local with your values'"
   },
   "dependencies": {
     "@mocanetwork/airkit": "^1.6.0",
@@ -28,6 +32,7 @@
     "lucide-react": "^0.545.0",
     "next": "15.5.4",
     "next-auth": "^4.24.11",
+    "node-fetch": "^3.3.2",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "solc": "^0.8.30",
